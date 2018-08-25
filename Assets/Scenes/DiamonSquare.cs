@@ -13,6 +13,12 @@ public class DiamonSquare : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        int temp = 1;
+        for (int i = 0; i < edges; i++)
+        {
+            temp *= 2;
+        }
+        edges = temp;
         CreateTerrain();
 	}
 	
@@ -41,7 +47,7 @@ public class DiamonSquare : MonoBehaviour {
 
         int offSet = 0;
 
-        // creating terrain
+        // creating flat terrain
         for (int i = 0; i <= edges; i++)
         {
             for (int j = 0; j <= edges; j++)
@@ -89,10 +95,6 @@ public class DiamonSquare : MonoBehaviour {
 
 
 
-
-
-
-
         // start diamond square algorithm
 
         // the number of steps needed is the log of the number of edges
@@ -132,6 +134,7 @@ public class DiamonSquare : MonoBehaviour {
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
+
     }
 
     // diamond square algorithm performed on a single square
