@@ -53,10 +53,10 @@ Shader "Custom/WorldPosShader" {
 			// needs to be able to take in position vertex as well as worldPos (for height shading,
 			// and worldNormal for the phong shading)
 			struct v2f {
-				float4 position: SV_POSITION;
-				float4 worldPosition : TEXCOORD0;
-				float3 worldNormal : TEXCOORD1;
-			};
+                float3 worldPos : TEXCOORD0;
+                half3 worldNormal : TEXCOORD1;
+                float4 pos : SV_POSITION;
+            };
 
 
 			// now prepare the different property levels
