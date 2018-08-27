@@ -14,15 +14,20 @@ Shader "Custom/TerrainShader"
 		_Level2("Level2", Float) = 3
 
 		_Level1Color("Level1Color", Color) = (0.5660378,0.4806644,0.05606978,1)
-		_Level1("Level1", Float) = -4
+		_Level1("Level1", Float) = -6
 
 		_GroundColor("SandColor", Color) = (0.6603774,0.4446357,0.07787468,1)
-		_GroundLevel("SandLevel", Float) = -6
+		_GroundLevel("SandLevel", Float) = -7
 
 		_WaterColor("WaterColor", Color) = (0,0.4847451,0.6509434,1)
 		_WaterLevel("WaterLevel", Float) = -8
 
-		_Slope("Slope Fader", Range(0,1)) = 0
+		_Saturation("Saturation level", Range(0,1)) = 0.25
+
+		// values for the light source
+		_PointLightColor("Point Light Color", Color) = (0, 0, 0)
+		_PointLightPosition("Point Light Position", Vector) = (0.0, 25.0, 0.0)
+
 	}
 	SubShader
 	{
@@ -35,7 +40,10 @@ Shader "Custom/TerrainShader"
 		#pragma fragment frag
 #		include "UnityCG.cginc"
 
-
+		// declare the structure that's used 
+		// worldPos is used to retrieve vertex height to determine the color of the terrain
+		// worldNormal is used to calculate phong shading
+		// pos to inform GPU of the clip space position
 		struct v2f {
 		float3 worldPos : TEXCOORD0;
 		half3 worldNormal : TEXCOORD1;
@@ -61,7 +69,10 @@ Shader "Custom/TerrainShader"
 		float _WaterLevel;
 		float4 _WaterColor;
 
-		float _Slope;
+		float _Saturation;
+
+		uniform float3 _PointLightColor;
+		uniform float3 _PointLightPosition;
 
 		// nothing really happens here, just passing through the vertex informations
 		v2f vert(float4 vertex : POSITION, float3 normal : NORMAL)
@@ -73,9 +84,10 @@ Shader "Custom/TerrainShader"
 			return o;
 		}
 
-		// color the pixels using fragment shader depending on the height value of the vertices
+		// color the pixels using fragment shader depending on the height value of the vertices and apply phong shading
 		fixed4 frag(v2f i) : SV_Target
-		{
+		{	
+			// assign pixel colors depending on the height of the vertex
 			float4 color;
 			if (i.worldPos.y >= _PeakLevel)
 				color = _PeakColor;
@@ -98,9 +110,47 @@ Shader "Custom/TerrainShader"
 			if (i.worldPos.y <= _WaterLevel)
 				color = _WaterColor;
 
-			color *= saturate(color + _Slope);
+			// apply saturation to the colors
+			color *= saturate(color + _Saturation);
 
-			return color;
+
+			// add in phong shading, adapted from lab5,  so it applies phong shading at fragment shader rather than vertex shader
+			float4 phongColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+			// Convert Vertex position and corresponding normal into world coords.
+			// Note that we have to multiply the normal by the transposed inverse of the world 
+			// transformation matrix (for cases where we have non-uniform scaling; we also don't
+			// care about the "fourth" dimension, because translations don't affect the normal) 
+			float3 worldNormal = normalize(i.worldNormal);
+
+			// Calculate ambient RGB intensities
+			float Ka = 1;
+
+			// here rather than using v.color.rgb in lab5, we use the color that was determined previously by the height of the vertices
+			float3 amb = color.rgb * UNITY_LIGHTMODEL_AMBIENT.rgb * Ka;
+
+			// Calculate diffuse RBG reflections, we save the results of L.N because we will use it again
+			// (when calculating the reflected ray in our specular component)
+			float fAtt = 1;
+			float Kd = 1;
+			float3 L = normalize(_PointLightPosition - i.worldPos);
+
+			float LdotN = dot(L, worldNormal.xyz);
+			float3 dif = fAtt * _PointLightColor.rgb * Kd * color.rgb * saturate(LdotN);
+
+			// Calculate specular reflections
+			float Ks = 1;
+			float specN = 5; // Values>>1 give tighter highlights
+			float3 V = normalize(_WorldSpaceCameraPos - i.worldPos.xyz);
+
+			float3 R = float3(0.0, 0.0, 0.0);
+			float3 spe = fAtt * _PointLightColor.rgb * Ks * pow(saturate(dot(V, R)), specN);
+
+			// Combine Phong illumination model components
+			phongColor.rgb = amb.rgb + dif.rgb + spe.rgb;
+			phongColor.a = color.a;
+
+			return phongColor;
 		}
 		ENDCG
 	}
