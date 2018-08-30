@@ -24,9 +24,11 @@ Shader "Custom/TerrainShader"
 
 		_Saturation("Saturation level", Range(0,1)) = 0.25
 
-		// values for the light source
+		// values for the light source and Phong illumination
 		_PointLightColor("Point Light Color", Color) = (0, 0, 0)
 		_PointLightPosition("Point Light Position", Vector) = (0.0, 25.0, 0.0)
+		_specN("Specular highlight", Range(0,50)) = 5
+		_Ks("Specular constant",Range(0,1)) = 0.25
 
 	}
 	SubShader
@@ -73,6 +75,8 @@ Shader "Custom/TerrainShader"
 
 		uniform float3 _PointLightColor;
 		uniform float3 _PointLightPosition;
+		float _specN;
+		float _Ks;
 
 		// nothing really happens here, just passing through the vertex informations
 		v2f vert(float4 vertex : POSITION, float3 normal : NORMAL)
@@ -88,6 +92,7 @@ Shader "Custom/TerrainShader"
 		fixed4 frag(v2f i) : SV_Target
 		{	
 			// assign pixel colors depending on the height of the vertex
+			// use lerp to interpolate colors https://docs.unity3d.com/ScriptReference/Color.Lerp.html
 			float4 color;
 			if (i.worldPos.y >= _PeakLevel)
 				color = _PeakColor;
@@ -114,7 +119,7 @@ Shader "Custom/TerrainShader"
 			color *= saturate(color + _Saturation);
 
 
-			// add in phong shading, adapted from lab5,  so it applies phong shading at fragment shader rather than vertex shader
+			// add in phong shading, adapted from lab5,  so it applies phong illumination at fragment shader rather than vertex shader
 			float4 phongColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 			// Convert Vertex position and corresponding normal into world coords.
@@ -139,12 +144,11 @@ Shader "Custom/TerrainShader"
 			float3 dif = fAtt * _PointLightColor.rgb * Kd * color.rgb * saturate(LdotN);
 
 			// Calculate specular reflections
-			float Ks = 1;
-			float specN = 5; // Values>>1 give tighter highlights
 			float3 V = normalize(_WorldSpaceCameraPos - i.worldPos.xyz);
 
-			float3 R = float3(0.0, 0.0, 0.0);
-			float3 spe = fAtt * _PointLightColor.rgb * Ks * pow(saturate(dot(V, R)), specN);
+			//float3 R = float3(0.0, 0.0, 0.0);
+			float3 R = float3(2 * worldNormal * LdotN - L);
+			float3 spe = fAtt * _PointLightColor.rgb * _Ks * pow(saturate(dot(V, R)), _specN);
 
 			// Combine Phong illumination model components
 			phongColor.rgb = amb.rgb + dif.rgb + spe.rgb;

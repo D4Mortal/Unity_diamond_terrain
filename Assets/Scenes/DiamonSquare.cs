@@ -2,58 +2,62 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// the diamond square algorithm is built with support of this guide https://www.youtube.com/watch?v=1HV8GbFnCik
 public class DiamonSquare : MonoBehaviour {
 
     public int edges;
     public float size;
     public float height;
+    public Material mat;
+
+    private float halfSize;
+    private float sizeOfEdges;
 
     private Vector3[] vertices;
     private int numOfVertices;
 
 	// Use this for initialization
 	void Start () {
-        int temp = 1;
-        for (int i = 0; i < edges; i++)
-        {
-            temp *= 2;
-        }
-        edges = temp;
-        CreateTerrain();
-	}
-	
+
+        // initialize values for creating terrain
+        // the number of edges is a power of 2
+        edges = (int)Mathf.Pow(2.0f, (float)edges);
+
+        halfSize = size * 0.5f;
+        sizeOfEdges = size / edges;
+        numOfVertices = (edges + 1) * (edges + 1);
+
+        MeshFilter cubeMesh = this.gameObject.AddComponent<MeshFilter>();
+        cubeMesh.mesh = this.CreateTerrain();
+
+        MeshRenderer renderer = this.gameObject.AddComponent<MeshRenderer>();
+        renderer.material = mat;
+    }
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 
-    public void CreateTerrain()
-    {   
-        // there's n+1 vertices for n faces on each side
-        numOfVertices = (edges + 1) * (edges + 1);
+    public Mesh CreateTerrain()
+    {
+        int offSet = 0;
 
         // initializing matrices for vertices and its uv values
         vertices = new Vector3[numOfVertices];
         Vector2[] vertex_uv = new Vector2[numOfVertices];
 
-        // an array for storing triangles, there are a total of (edges*edges*2) number of triangles, and each triangles requires 3 points 
+        // an array for storing triangles, there are a total of (edges*edges*2) number of triangles, and each triangles requires 3 points
         int[] triangles = new int[edges * edges * 2 * 3];
 
-        float halfSize = size * 0.5f;
-        float sizeOfEdges = size / edges;
-
-        Mesh mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
-
-        int offSet = 0;
 
         // creating flat terrain
         for (int i = 0; i <= edges; i++)
         {
             for (int j = 0; j <= edges; j++)
             {
-                // setup the triangle vertices from left to right  and normalize the uv vector
-                // i * (edges + 1) + j is used because it represents an 2D array using an 1D representation
+                // setup the triangle vertices from left to right and normalize the uv vector
+                // i * (edges + 1) + j is used because it mimics an 2D array using an 1D representation
                 vertices[i * (edges + 1) + j] = new Vector3(-halfSize + j * sizeOfEdges, 0.0f, halfSize - i * sizeOfEdges);
                 vertex_uv[i * (edges + 1) + j] = new Vector2((float)i / edges, (float)j / edges);
 
@@ -85,14 +89,11 @@ public class DiamonSquare : MonoBehaviour {
         // top right
         vertices[edges].y = Random.Range(-height, height);
 
-        // bottom right 
+        // bottom right
         vertices[vertices.Length - 1].y = Random.Range(-height, height);
 
         // bottom left
         vertices[vertices.Length - 1 - edges].y = Random.Range(-height, height);
-
-
-
 
 
         // start diamond square algorithm
@@ -102,6 +103,7 @@ public class DiamonSquare : MonoBehaviour {
         int squareSize = edges;
         int numSquares = 1;
 
+        // step through the terrain and apply diamond square
         for (int i = 0; i < numOfSteps; i++)
         {
             int row = 0;
@@ -127,7 +129,7 @@ public class DiamonSquare : MonoBehaviour {
             height *= 0.5f;
         }
 
-
+        Mesh mesh = new Mesh();
         mesh.vertices = vertices;
         mesh.uv = vertex_uv;
         mesh.triangles = triangles;
@@ -135,6 +137,7 @@ public class DiamonSquare : MonoBehaviour {
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
 
+        return mesh;
     }
 
     // diamond square algorithm performed on a single square
@@ -155,12 +158,13 @@ public class DiamonSquare : MonoBehaviour {
         vertices[center].y = vertices[topLeft].y + vertices[bottomLeft].y + vertices[topRight].y + vertices[bottomRight].y;
         vertices[center].y *= 0.25f;
 
+        // add an random value to the height
         vertices[center].y += Random.Range(-heightRange, heightRange);
 
 
         // Square step
 
-        // find the corners of the square 
+        // find the corners of the square
         int left = center - halfSize;
         int right = center + halfSize;
         int top = topLeft + halfSize;

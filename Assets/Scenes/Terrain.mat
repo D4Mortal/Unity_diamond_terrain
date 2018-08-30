@@ -63,6 +63,7 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _GroundLevel: -7
+    - _Ks: 0.147
     - _Level1: -6
     - _Level2: 3
     - _Level3: 15
@@ -73,7 +74,7 @@ Material:
     - _Parallax: 0.02
     - _PeakLevel: 20
     - _SandLevel: -6
-    - _Saturation: 0.25
+    - _Saturation: 0
     - _Slope: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -81,6 +82,7 @@ Material:
     - _UVSec: 0
     - _WaterLevel: -8
     - _ZWrite: 1
+    - _specN: 41.6
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
@@ -91,7 +93,7 @@ Material:
     - _Level4Color: {r: 0.64, g: 0.224, b: 0.208, a: 1}
     - _PeakColor: {r: 0.72196794, g: 0.8207547, b: 0.70848167, a: 1}
     - _PointLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _PointLightPosition: {r: 0, g: 25, b: 0, a: 0}
+    - _PointLightPosition: {r: -10, g: 30, b: 0, a: 0}
     - _SandColor: {r: 0.37, g: 0.78, b: 0.92, a: 1}
     - _SunPosition: {r: 0, g: 0, b: 0, a: 1}
     - _WaterColor: {r: 0, g: 0.4847451, b: 0.6509434, a: 1}
