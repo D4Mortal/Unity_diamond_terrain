@@ -43,9 +43,8 @@ public class DiamonSquare : MonoBehaviour {
     {
         int offSet = 0;
 
-        // initializing matrices for vertices and its uv values
+        // initializing matrices for vertices
         vertices = new Vector3[numOfVertices];
-        Vector2[] vertex_uv = new Vector2[numOfVertices];
 
         // an array for storing triangles, there are a total of (edges*edges*2) number of triangles, and each triangles requires 3 points
         int[] triangles = new int[edges * edges * 2 * 3];
@@ -59,9 +58,10 @@ public class DiamonSquare : MonoBehaviour {
                 // setup the triangle vertices from left to right and normalize the uv vector
                 // i * (edges + 1) + j is used because it mimics an 2D array using an 1D representation
                 vertices[i * (edges + 1) + j] = new Vector3(-halfSize + j * sizeOfEdges, 0.0f, halfSize - i * sizeOfEdges);
-                vertex_uv[i * (edges + 1) + j] = new Vector2((float)i / edges, (float)j / edges);
+                
 
                 // create triangles when it's not at the corners
+                
                 if (i < edges && j < edges)
                 {
                     // retreive the co-oridinate of the vertices of the triangle that's currently building
@@ -125,13 +125,12 @@ public class DiamonSquare : MonoBehaviour {
             numSquares *= 2;
             squareSize /= 2;
 
-            // decreasing the rate height decreases
-            height *= 0.5f;
+            // decreasing the rate height varies
+            height *= 0.52f;
         }
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertices;
-        mesh.uv = vertex_uv;
         mesh.triangles = triangles;
 
         mesh.RecalculateBounds();

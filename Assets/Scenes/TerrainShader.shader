@@ -4,20 +4,20 @@ Shader "Custom/TerrainShader"
 	Properties{
 
 		// properties for coloring the terrain
-		_PeakColor("PeakColor", Color) = (0.6322535,0.754717,0.6016376,1)
-		_PeakLevel("PeakLevel", Float) = 20
+		_MountainTopColor("MountainTopColor", Color) = (0.6322535,0.754717,0.6016376,1)
+		_MountainTopHeight("MountainTopHeight", Float) = 20
 
-		_Level3Color("Level3Color", Color) = (0.660898,0.9716981,0.637104,1)
-		_Level3("Level3", Float) = 15
+		_MountainCrestColor("MountainCrestColor", Color) = (0.660898,0.9716981,0.637104,1)
+		_MountainCrestHeight("MountainCrestHeight", Float) = 15
 
-		_Level2Color("Level2Color", Color) = (0.01610675,0.3962264,0,1)
-		_Level2("Level2", Float) = 3
+		_ForestColor("ForestColor", Color) = (0.01610675,0.3962264,0,1)
+		_ForestHeight("ForestHeight", Float) = 3
 
-		_Level1Color("Level1Color", Color) = (0.5660378,0.4806644,0.05606978,1)
-		_Level1("Level1", Float) = -6
+		_ForestEdgeColor("ForestEdgeColor", Color) = (0.5660378,0.4806644,0.05606978,1)
+		_ForestEdgeHeight("ForestEdgeHeight", Float) = -6
 
-		_GroundColor("SandColor", Color) = (0.6603774,0.4446357,0.07787468,1)
-		_GroundLevel("SandLevel", Float) = -7
+		_GroundColor("GroundColor", Color) = (0.6603774,0.4446357,0.07787468,1)
+		_GroundLevel("GroundLevel", Float) = -7
 
 		_WaterColor("WaterColor", Color) = (0,0.4847451,0.6509434,1)
 		_WaterLevel("WaterLevel", Float) = -8
@@ -25,8 +25,9 @@ Shader "Custom/TerrainShader"
 		_Saturation("Saturation level", Range(0,1)) = 0.25
 
 		// values for the light source and Phong illumination
-		_PointLightColor("Point Light Color", Color) = (0, 0, 0)
+		_PointLightColor("Point Light Color", Color) = (1, 1, 1, 1)
 		_PointLightPosition("Point Light Position", Vector) = (0.0, 25.0, 0.0)
+
 		_specN("Specular highlight", Range(0,50)) = 5
 		_Ks("Specular constant",Range(0,1)) = 0.25
 
@@ -53,17 +54,17 @@ Shader "Custom/TerrainShader"
 		};
 
 		// variables for different colors
-		float _PeakLevel;
-		float4 _PeakColor;
+		float _MountainTopHeight;
+		float4 _MountainTopColor;
 
-		float _Level3;
-		float4 _Level3Color;
+		float _MountainCrestHeight;
+		float4 _MountainCrestColor;
 
-		float _Level2;
-		float4 _Level2Color;
+		float _ForestHeight;
+		float4 _ForestColor;
 
-		float _Level1;
-		float4 _Level1Color;
+		float _ForestEdgeHeight;
+		float4 _ForestEdgeColor;
 
 		float _GroundLevel;
 		float4 _GroundColor;
@@ -94,23 +95,23 @@ Shader "Custom/TerrainShader"
 			// assign pixel colors depending on the height of the vertex
 			// use lerp to interpolate colors https://docs.unity3d.com/ScriptReference/Color.Lerp.html
 			float4 color;
-			if (i.worldPos.y >= _PeakLevel)
-				color = _PeakColor;
+			if (i.worldPos.y >= _MountainTopHeight)
+				color = _MountainTopColor;
 
-			if (i.worldPos.y <= _PeakLevel)
-				color = lerp(_Level3Color, _PeakColor, (i.worldPos.y - _Level3) / (_PeakLevel - _Level3));
+			if (i.worldPos.y <= _MountainTopHeight)
+				color = lerp(_MountainCrestColor, _MountainTopColor, (i.worldPos.y - _MountainCrestHeight) / (_MountainTopHeight - _MountainCrestHeight));
 
-			if (i.worldPos.y <= _Level3)
-				color = lerp(_Level2Color, _Level3Color, (i.worldPos.y - _Level2) / (_Level3 - _Level2));
+			if (i.worldPos.y <= _MountainCrestHeight)
+				color = lerp(_ForestColor, _MountainCrestColor, (i.worldPos.y - _ForestHeight) / (_MountainCrestHeight - _ForestHeight));
 
-			if (i.worldPos.y <= _Level2)
-				color = lerp(_Level1Color, _Level2Color, (i.worldPos.y - _WaterLevel) / (_Level2 - _WaterLevel));
+			if (i.worldPos.y <= _ForestHeight)
+				color = lerp(_ForestEdgeColor, _ForestColor, (i.worldPos.y - _ForestEdgeHeight) / (_ForestHeight - _ForestEdgeHeight));
 
-			if (i.worldPos.y <= _Level1)
-				color = lerp(_GroundColor, _Level1Color, (i.worldPos.y - _GroundLevel) / (_Level1 - _GroundLevel));
+			if (i.worldPos.y <= _ForestEdgeHeight)
+				color = lerp(_GroundColor, _ForestEdgeColor, (i.worldPos.y - _GroundLevel) / (_ForestEdgeHeight - _GroundLevel));
 
 			if (i.worldPos.y <= _GroundLevel)
-				color = lerp(_WaterColor, _GroundColor, (i.worldPos.y - _WaterLevel) / (_Level1 - _WaterLevel));
+				color = lerp(_WaterColor, _GroundColor, (i.worldPos.y - _WaterLevel) / (_ForestEdgeHeight - _WaterLevel));
 
 			if (i.worldPos.y <= _WaterLevel)
 				color = _WaterColor;
