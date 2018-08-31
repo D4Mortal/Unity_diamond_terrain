@@ -3,25 +3,6 @@ Shader "Custom/TerrainShader"
 {	
 	Properties{
 
-		// properties for coloring the terrain
-		_MountainTopColor("MountainTopColor", Color) = (0.6322535,0.754717,0.6016376,1)
-		_MountainTopHeight("MountainTopHeight", Float) = 20
-
-		_MountainCrestColor("MountainCrestColor", Color) = (0.660898,0.9716981,0.637104,1)
-		_MountainCrestHeight("MountainCrestHeight", Float) = 15
-
-		_ForestColor("ForestColor", Color) = (0.01610675,0.3962264,0,1)
-		_ForestHeight("ForestHeight", Float) = 3
-
-		_ForestEdgeColor("ForestEdgeColor", Color) = (0.5660378,0.4806644,0.05606978,1)
-		_ForestEdgeHeight("ForestEdgeHeight", Float) = -6
-
-		_GroundColor("GroundColor", Color) = (0.6603774,0.4446357,0.07787468,1)
-		_GroundLevel("GroundLevel", Float) = -7
-
-		_WaterColor("WaterColor", Color) = (0,0.4847451,0.6509434,1)
-		_WaterLevel("WaterLevel", Float) = -8
-
 		_Saturation("Saturation level", Range(0,1)) = 0.25
 
 		// values for the light source and Phong illumination
@@ -30,7 +11,7 @@ Shader "Custom/TerrainShader"
 
 		_specN("Specular highlight", Range(0,50)) = 5
 		_Ks("Specular constant",Range(0,1)) = 0.25
-
+		_Ka("RGB intensity", Range(0,1)) = 1
 	}
 	SubShader
 	{
@@ -51,26 +32,27 @@ Shader "Custom/TerrainShader"
 		float3 worldPos : TEXCOORD0;
 		half3 worldNormal : TEXCOORD1;
 		float4 pos : SV_POSITION;
+		fixed4 color : COLOR;
 		};
 
 		// variables for different colors
-		float _MountainTopHeight;
-		float4 _MountainTopColor;
+		static float4 MountainTopColor = float4(0.6322535f, 0.754717f, 0.6016376f, 1.0f);
+		static float MountainTopHeight = 20;
 
-		float _MountainCrestHeight;
-		float4 _MountainCrestColor;
+		static float4 MountainCrestColor = float4(0.660898f, 0.9716981f, 0.637104f, 1.0f);
+		static float MountainCrestHeight = 15;
 
-		float _ForestHeight;
-		float4 _ForestColor;
+		static float4 ForestColor = float4(0.01610675f, 0.3962264f, 0.0f, 1.0f);
+		static float ForestHeight = 3;
 
-		float _ForestEdgeHeight;
-		float4 _ForestEdgeColor;
+		static float4 ForestEdgeColor = float4(0.5660378f, 0.4806644f, 0.05606978f, 1.0f);
+		static float ForestEdgeHeight = -6;
 
-		float _GroundLevel;
-		float4 _GroundColor;
+		static float4 GroundColor = float4(0.6603774f, 0.4446357f, 0.07787468f, 1.0f);
+		static float GroundLevel = -7;
 
-		float _WaterLevel;
-		float4 _WaterColor;
+		static float4 WaterColor = float4(0.0f, 0.4847451f, 0.6509434f, 1.0f);
+		static float WaterLevel = -8;
 
 		float _Saturation;
 
@@ -78,46 +60,58 @@ Shader "Custom/TerrainShader"
 		uniform float3 _PointLightPosition;
 		float _specN;
 		float _Ks;
+		float _Ka;
 
 		// nothing really happens here, just passing through the vertex informations
-		v2f vert(float4 vertex : POSITION, float3 normal : NORMAL)
+		v2f vert(float4 vertex : POSITION, float3 normal : NORMAL, fixed4 color : COLOR, float3 worldPos : TEXCOORD0)
 		{
 			v2f o;
 			o.pos = UnityObjectToClipPos(vertex);
 			o.worldPos = mul(unity_ObjectToWorld, vertex).xyz;
 			o.worldNormal = UnityObjectToWorldNormal(normal);
+			o.color = color;
+			
 			return o;
 		}
 
 		// color the pixels using fragment shader depending on the height value of the vertices and apply phong shading
+		// coloring was originally done in the vertex shader but switched the fragment shader as it provided better coloring
 		fixed4 frag(v2f i) : SV_Target
 		{	
 			// assign pixel colors depending on the height of the vertex
 			// use lerp to interpolate colors https://docs.unity3d.com/ScriptReference/Color.Lerp.html
-			float4 color;
-			if (i.worldPos.y >= _MountainTopHeight)
-				color = _MountainTopColor;
+			if (i.worldPos.y >= MountainTopHeight) {
+				i.color = MountainTopColor;
+			}
 
-			if (i.worldPos.y <= _MountainTopHeight)
-				color = lerp(_MountainCrestColor, _MountainTopColor, (i.worldPos.y - _MountainCrestHeight) / (_MountainTopHeight - _MountainCrestHeight));
+			if (i.worldPos.y <= MountainTopHeight) {
+				i.color = lerp(MountainCrestColor, MountainTopColor, (i.worldPos.y - MountainCrestHeight) / (MountainTopHeight - MountainCrestHeight));
+			}
+				
+			if (i.worldPos.y <= MountainCrestHeight) {
+				i.color = lerp(ForestColor, MountainCrestColor, (i.worldPos.y - ForestHeight) / (MountainCrestHeight - ForestHeight));
+			}
+	
+			if (i.worldPos.y <= ForestHeight) {
+				i.color = lerp(ForestEdgeColor, ForestColor, (i.worldPos.y - ForestEdgeHeight) / (ForestHeight - ForestEdgeHeight));
+			}
 
-			if (i.worldPos.y <= _MountainCrestHeight)
-				color = lerp(_ForestColor, _MountainCrestColor, (i.worldPos.y - _ForestHeight) / (_MountainCrestHeight - _ForestHeight));
+			if (i.worldPos.y <= ForestEdgeHeight) {
+				i.color = lerp(GroundColor, ForestEdgeColor, (i.worldPos.y - GroundLevel) / (ForestEdgeHeight - GroundLevel));
+			}
+	
+			if (i.worldPos.y <= GroundLevel) {
+				i.color = lerp(WaterColor, GroundColor, (i.worldPos.y - WaterLevel) / (GroundLevel - WaterLevel));
+			}
 
-			if (i.worldPos.y <= _ForestHeight)
-				color = lerp(_ForestEdgeColor, _ForestColor, (i.worldPos.y - _ForestEdgeHeight) / (_ForestHeight - _ForestEdgeHeight));
-
-			if (i.worldPos.y <= _ForestEdgeHeight)
-				color = lerp(_GroundColor, _ForestEdgeColor, (i.worldPos.y - _GroundLevel) / (_ForestEdgeHeight - _GroundLevel));
-
-			if (i.worldPos.y <= _GroundLevel)
-				color = lerp(_WaterColor, _GroundColor, (i.worldPos.y - _WaterLevel) / (_ForestEdgeHeight - _WaterLevel));
-
-			if (i.worldPos.y <= _WaterLevel)
-				color = _WaterColor;
+			if (i.worldPos.y <= WaterLevel) {
+				i.color = WaterColor;
+			}
 
 			// apply saturation to the colors
-			color *= saturate(color + _Saturation);
+			i.color *= saturate(i.color + _Saturation);
+
+
 
 
 			// add in phong shading, adapted from lab5,  so it applies phong illumination at fragment shader rather than vertex shader
@@ -130,10 +124,8 @@ Shader "Custom/TerrainShader"
 			float3 worldNormal = normalize(i.worldNormal);
 
 			// Calculate ambient RGB intensities
-			float Ka = 1;
-
 			// here rather than using v.color.rgb in lab5, we use the color that was determined previously by the height of the vertices
-			float3 amb = color.rgb * UNITY_LIGHTMODEL_AMBIENT.rgb * Ka;
+			float3 amb = i.color.rgb * UNITY_LIGHTMODEL_AMBIENT.rgb * _Ka;
 
 			// Calculate diffuse RBG reflections, we save the results of L.N because we will use it again
 			// (when calculating the reflected ray in our specular component)
@@ -142,7 +134,7 @@ Shader "Custom/TerrainShader"
 			float3 L = normalize(_PointLightPosition - i.worldPos);
 
 			float LdotN = dot(L, worldNormal.xyz);
-			float3 dif = fAtt * _PointLightColor.rgb * Kd * color.rgb * saturate(LdotN);
+			float3 dif = fAtt * _PointLightColor.rgb * Kd * i.color.rgb * saturate(LdotN);
 
 			// Calculate specular reflections
 			float3 V = normalize(_WorldSpaceCameraPos - i.worldPos.xyz);
@@ -153,9 +145,9 @@ Shader "Custom/TerrainShader"
 
 			// Combine Phong illumination model components
 			phongColor.rgb = amb.rgb + dif.rgb + spe.rgb;
-			phongColor.a = color.a;
+			i.color.rgb = phongColor.rgb;
 
-			return phongColor;
+			return i.color;
 		}
 		ENDCG
 	}

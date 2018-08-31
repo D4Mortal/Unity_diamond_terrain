@@ -5,9 +5,9 @@ using UnityEngine;
 // the diamond square algorithm is built with support of this guide https://www.youtube.com/watch?v=1HV8GbFnCik
 public class DiamonSquare : MonoBehaviour {
 
-    public int edges;
-    public float size;
-    public float height;
+    public int edges = 7;
+    public float size = 100;
+    public float height = 20;
     public Material mat;
 
     private float halfSize;
