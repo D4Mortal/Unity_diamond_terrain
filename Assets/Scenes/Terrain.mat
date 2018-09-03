@@ -66,14 +66,14 @@ Material:
     - _GlossyReflections: 1
     - _GroundLevel: -7
     - _Ka: 1
-    - _Ks: 0.136
+    - _Ks: 0.082
     - _Metallic: 0
     - _Mode: 0
     - _MountainCrestHeight: 15
     - _MountainTopHeight: 20
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Saturation: 0.25
+    - _Saturation: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -90,5 +90,5 @@ Material:
     - _MountainCrestColor: {r: 0.660898, g: 0.9716981, b: 0.637104, a: 1}
     - _MountainTopColor: {r: 0.6322535, g: 0.754717, b: 0.6016376, a: 1}
     - _PointLightColor: {r: 0.8773585, g: 0.7955387, b: 0.5007565, a: 1}
-    - _PointLightPosition: {r: 0, g: 1000, b: 0, a: 1}
+    - _PointLightPosition: {r: 0, g: 25, b: 0, a: 1}
     - _WaterColor: {r: 0, g: 0.4847451, b: 0.6509434, a: 1}

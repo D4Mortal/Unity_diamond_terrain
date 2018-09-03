@@ -3,14 +3,12 @@ Shader "Custom/TerrainShader"
 {	
 	Properties{
 
-		_Saturation("Saturation level", Range(0,1)) = 0.25
-
 		// values for the light source and Phong illumination
 		_PointLightColor("Point Light Color", Color) = (1, 1, 1, 1)
 		_PointLightPosition("Point Light Position", Vector) = (0.0, 25.0, 0.0)
 
 		_specN("Specular highlight", Range(0,50)) = 5
-		_Ks("Specular constant",Range(0,1)) = 0.25
+		_Ks("Specular constant",Range(0,1)) = 0.08
 		_Ka("RGB intensity", Range(0,1)) = 1
 	}
 	SubShader
@@ -28,7 +26,7 @@ Shader "Custom/TerrainShader"
 		// worldPos is used to retrieve vertex height to determine the color of the terrain
 		// worldNormal is used to calculate phong shading
 		// pos to inform GPU of the clip space position
-		struct v2f {
+		struct vertOut {
 		float3 worldPos : TEXCOORD0;
 		half3 worldNormal : TEXCOORD1;
 		float4 pos : SV_POSITION;
@@ -54,8 +52,6 @@ Shader "Custom/TerrainShader"
 		static float4 WaterColor = float4(0.0f, 0.4847451f, 0.6509434f, 1.0f);
 		static float WaterLevel = -8;
 
-		float _Saturation;
-
 		uniform float3 _PointLightColor;
 		uniform float3 _PointLightPosition;
 		float _specN;
@@ -63,9 +59,9 @@ Shader "Custom/TerrainShader"
 		float _Ka;
 
 		// nothing really happens here, just passing through the vertex informations
-		v2f vert(float4 vertex : POSITION, float3 normal : NORMAL, fixed4 color : COLOR, float3 worldPos : TEXCOORD0)
+		vertOut vert(float4 vertex : POSITION, float3 normal : NORMAL, fixed4 color : COLOR, float3 worldPos : TEXCOORD0)
 		{
-			v2f o;
+			vertOut o;
 			o.pos = UnityObjectToClipPos(vertex);
 			o.worldPos = mul(unity_ObjectToWorld, vertex).xyz;
 			o.worldNormal = UnityObjectToWorldNormal(normal);
@@ -76,10 +72,10 @@ Shader "Custom/TerrainShader"
 
 		// color the pixels using fragment shader depending on the height value of the vertices and apply phong shading
 		// coloring was originally done in the vertex shader but switched the fragment shader as it provided better coloring
-		fixed4 frag(v2f i) : SV_Target
+		fixed4 frag(vertOut i) : SV_Target
 		{	
 			// assign pixel colors depending on the height of the vertex
-			// use lerp to interpolate colors https://docs.unity3d.com/ScriptReference/Color.Lerp.html
+			// use lerp to linearly interpolate colors 
 			if (i.worldPos.y >= MountainTopHeight) {
 				i.color = MountainTopColor;
 			}
@@ -107,12 +103,6 @@ Shader "Custom/TerrainShader"
 			if (i.worldPos.y <= WaterLevel) {
 				i.color = WaterColor;
 			}
-
-			// apply saturation to the colors
-			i.color *= saturate(i.color + _Saturation);
-
-
-
 
 			// add in phong shading, adapted from lab5,  so it applies phong illumination at fragment shader rather than vertex shader
 			float4 phongColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
