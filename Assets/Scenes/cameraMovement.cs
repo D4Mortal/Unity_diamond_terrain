@@ -45,10 +45,10 @@ public class cameraMovement : MonoBehaviour {
         //this.transform.Rotate(Vector3);
         //this.transform.LookAt(Vector3);
         
-        this.rb.MovePosition(this.transform.position + GetBaseInput()*Time.deltaTime*moveSpd);
+        this.rb.MovePosition(this.transform.position + KeyboardMovement()*Time.deltaTime*moveSpd);
     }
 
-    private Vector3 GetBaseInput() { //returns the basic values, if it's 0 than it's not active.
+    private Vector3 KeyboardMovement() { //returns the basic values, if it's 0 than it's not active.
         Vector3 p_Velocity = Vector3.zero;
         if (Input.GetKey (KeyCode.W)){
             p_Velocity += transform.forward;
