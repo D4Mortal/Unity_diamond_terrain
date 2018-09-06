@@ -21,7 +21,7 @@ public class Waves : MonoBehaviour {
     void Update()
     {
         Mesh mesh = GetComponent<MeshFilter>().mesh;
-        meshCol.sharedMesh = mesh;
+        //meshCol.sharedMesh = mesh;
 
         if (initialVertices == null)
         {

@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Terrain
   m_Shader: {fileID: 4800000, guid: baded2db14173b84f8502aaeccac170c, type: 3}
@@ -90,5 +90,5 @@ Material:
     - _MountainCrestColor: {r: 0.660898, g: 0.9716981, b: 0.637104, a: 1}
     - _MountainTopColor: {r: 0.6322535, g: 0.754717, b: 0.6016376, a: 1}
     - _PointLightColor: {r: 0.8773585, g: 0.7955387, b: 0.5007565, a: 1}
-    - _PointLightPosition: {r: 0, g: 8.157334, b: -99.66674, a: 0}
+    - _PointLightPosition: {r: 0, g: 7.44737, b: 99.7223, a: 0}
     - _WaterColor: {r: 0, g: 0.4847451, b: 0.6509434, a: 1}
