@@ -114,7 +114,7 @@ public class DiamondSquare : MonoBehaviour {
 
                 for (int k = 0; k < numSquares; k++)
                 {
-                    DiamondSquare(row, col, squareSize, height);
+                    diamondSquare(row, col, squareSize, height);
                     col += squareSize;
                 }
 
@@ -140,7 +140,7 @@ public class DiamondSquare : MonoBehaviour {
     }
 
     // diamond square algorithm performed on a single square
-    public void DiamondSquare(int row, int col, int size, float heightRange)
+    public void diamondSquare(int row, int col, int size, float heightRange)
     {
         // Diamond step
         int halfSize = (int)(size * 0.5f);

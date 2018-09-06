@@ -90,5 +90,5 @@ Material:
     - _MountainCrestColor: {r: 0.660898, g: 0.9716981, b: 0.637104, a: 1}
     - _MountainTopColor: {r: 0.6322535, g: 0.754717, b: 0.6016376, a: 1}
     - _PointLightColor: {r: 0.8773585, g: 0.7955387, b: 0.5007565, a: 1}
-    - _PointLightPosition: {r: 0, g: -30.200813, b: 95.33054, a: 0}
+    - _PointLightPosition: {r: 0, g: -335.4084, b: 14.380016, a: 0}
     - _WaterColor: {r: 0, g: 0.4847451, b: 0.6509434, a: 1}
