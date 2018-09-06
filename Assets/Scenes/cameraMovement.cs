@@ -2,9 +2,11 @@
 using System.Collections;
  
 public class cameraMovement : MonoBehaviour {
- 	
+ 	//camera and collision objects need a rigidbody and colider components
+     //freeze rotation in rigidbody component for camera
+     //make sure the floor is kinematic
 	
-	float moveSpd = 3.0f; //regular speed
+	float moveSpd = 500.0f; //regular speed
     float sensitivity = 0.1f; //How sensitive it with mouse
     private Vector3 prevPosition;
     public Rigidbody rb;
@@ -33,11 +35,11 @@ public class cameraMovement : MonoBehaviour {
         if(Input.mousePosition.y >= Screen.height) {
             move += Vector3.up;
         }
-        //TODO - weird movement at excess up/down because up/down vector inverts when we flipfrom angling up to down
-        Vector3 mouseMovement = Input.mousePosition - prevPosition + 30*move;
+        //TODO - weird movement when camera looking straingt up/down and we want to go further up/down because up/down vector inverts when we flipfrom angling up to down
+        Vector3 mouseMovement = Input.mousePosition - prevPosition ;
         
         prevPosition = Input.mousePosition;
-        Vector3 cameraMovement = (mouseMovement * sensitivity);
+        Vector3 cameraMovement = ((mouseMovement+20*move) * sensitivity);
         //line below received great help from https://gist.github.com/gunderson/d7f096bd07874f31671306318019d996
         this.transform.eulerAngles = new Vector3(transform.eulerAngles.x - cameraMovement.y , transform.eulerAngles.y + cameraMovement.x , 0);
     
@@ -45,7 +47,7 @@ public class cameraMovement : MonoBehaviour {
         //this.transform.Rotate(Vector3);
         //this.transform.LookAt(Vector3);
         
-        this.rb.MovePosition(this.transform.position + GetBaseInput()*Time.deltaTime*moveSpd);
+        this.rb.AddForce(GetBaseInput()*Time.deltaTime*moveSpd*rb.mass);
     }
 
     private Vector3 GetBaseInput() { //returns the basic values, if it's 0 than it's not active.
