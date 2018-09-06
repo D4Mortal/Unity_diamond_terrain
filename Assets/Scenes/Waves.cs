@@ -10,15 +10,18 @@ public class Waves : MonoBehaviour {
     public float noiseWalk = 1f;
 
     private Vector3[] initialVertices;
+    private MeshCollider meshCol;
 
     private void Start()
     {
-        
+        meshCol = this.gameObject.AddComponent<MeshCollider>();
     }
+
     // based on wave behaviour in lab4, added in perlin noise based on https://answers.unity.com/questions/443031/sinus-for-rolling-waves.html for more realistic waves
     void Update()
     {
         Mesh mesh = GetComponent<MeshFilter>().mesh;
+        meshCol.sharedMesh = mesh;
 
         if (initialVertices == null)
         {

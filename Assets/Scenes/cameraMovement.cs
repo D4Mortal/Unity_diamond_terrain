@@ -2,26 +2,27 @@
 using System.Collections;
  
 public class cameraMovement : MonoBehaviour {
- 	//camera and collision objects need a rigidbody and colider components
-     //freeze rotation in rigidbody component for camera
+ 	
      //make sure the floor is kinematic
 	
-	float moveSpd = 500.0f; //regular speed
-    float sensitivity = 0.1f; //How sensitive it with mouse
-    private Vector3 prevPosition;
+	public float moveSpd = 7000.0f; //regular speed
+    public float sensitivity = 0.1f; //How sensitive it with mouse
     public Rigidbody rb;
+    private Vector3 prevPosition;
 
     void Start () {
         prevPosition = Input.mousePosition;
-        Debug.Log("width: " + Screen.width);
-        Debug.Log("height: " + Screen.height);
-        rb = GetComponent<Rigidbody>();
-        Debug.Log(this.transform.position);
+        
+        rb = this.gameObject.AddComponent<Rigidbody>();
+        SphereCollider collider = this.gameObject.AddComponent<SphereCollider>();
+        rb.mass = 10;
+        rb.drag = 5;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        rb.useGravity = false;
+        collider.radius = 0.5f;
     }
 
     void FixedUpdate () {
-        //Debug.Log(this.transform.position);
-
         Vector3 move = Vector3.zero;
         if(Input.mousePosition.x <= 0) {
             move += Vector3.left;
@@ -30,16 +31,16 @@ public class cameraMovement : MonoBehaviour {
             move += Vector3.right;
         }
         if(Input.mousePosition.y <= 0) {
-            move += Vector3.down;
+            move += Vector3.down*0.5f;
         }
         if(Input.mousePosition.y >= Screen.height) {
-            move += Vector3.up;
+            move += Vector3.up*0.5f;
         }
         //TODO - weird movement when camera looking straingt up/down and we want to go further up/down because up/down vector inverts when we flipfrom angling up to down
         Vector3 mouseMovement = Input.mousePosition - prevPosition ;
-        
+        Debug.Log(mouseMovement);
         prevPosition = Input.mousePosition;
-        Vector3 cameraMovement = ((mouseMovement+20*move) * sensitivity);
+        Vector3 cameraMovement = ((mouseMovement+5*move) * sensitivity);
         //line below received great help from https://gist.github.com/gunderson/d7f096bd07874f31671306318019d996
         this.transform.eulerAngles = new Vector3(transform.eulerAngles.x - cameraMovement.y , transform.eulerAngles.y + cameraMovement.x , 0);
     

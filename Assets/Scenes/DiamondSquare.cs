@@ -32,6 +32,9 @@ public class DiamondSquare : MonoBehaviour {
 
         MeshRenderer renderer = this.gameObject.AddComponent<MeshRenderer>();
         renderer.material = mat;
+
+        MeshCollider meshCol = this.gameObject.AddComponent<MeshCollider>();
+        meshCol.sharedMesh = cubeMesh.mesh;
     }
 
 	// Update is called once per frame
