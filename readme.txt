@@ -10,4 +10,8 @@ create a more realistic terrain.
 The wave effect is achieved through creating an plane that cuts through the terrain, the wave script uses the sin function to simlulat the effects of a wave 
 and has perlin noise added to it to add randomness in the waves for a more realistc effect. The idea of adding perlin noise is adapted from https://answers.unity.com/questions/443031/sinus-for-rolling-waves.html
 
-For the sun component, we first made created a sphere game object and added a shader which would simulate the effect of a more realistic sun rising and setting. We then made the sun object rotate appropriately around the x-axis relative to the plane’s position. To simulate the effect of changing light we manipulated the point light position variable within the Terrain shader by changing it’s vector position to be the same as the sun object within the SunOrbit script. By doing this, only the terrain changes its light intensity on its surface. Most of the implementations done here was learned/adapted from the labs on manipulating shader light and object rotation. 
+For the sun component, we first made created a sphere game object and added a shader which would simulate the effect of a more realistic
+sun rising and setting. We then made the sun object rotate appropriately around the x-axis relative to the plane’s position. To simulate
+the effect of changing light we manipulated the point light position variable within the Terrain shader by changing it’s vector position 
+to be the same as the sun object within the SunOrbit script. By doing this, only the terrain changes its light intensity on its surface.
+Most of the implementations done here was learned/adapted from the labs on manipulating shader light and object rotation. 
