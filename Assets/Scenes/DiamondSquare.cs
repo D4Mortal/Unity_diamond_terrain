@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // the diamond square algorithm is built with support of this guide https://www.youtube.com/watch?v=1HV8GbFnCik
-public class DiamonSquare : MonoBehaviour {
+public class DiamondSquare : MonoBehaviour {
 
     public int edges = 7;
     public float size = 100;
