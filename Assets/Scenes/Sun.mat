@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Terrain
-  m_Shader: {fileID: 4800000, guid: baded2db14173b84f8502aaeccac170c, type: 3}
+  m_Name: Sun
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -59,36 +59,18 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _ForestEdgeHeight: -6
-    - _ForestHeight: 3
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _GroundLevel: -7
-    - _Ka: 1
-    - _Ks: 0.082
     - _Metallic: 0
     - _Mode: 0
-    - _MountainCrestHeight: 15
-    - _MountainTopHeight: 20
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Saturation: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _WaterLevel: -8
     - _ZWrite: 1
-    - _specN: 5
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.8867924, g: 0.6250151, b: 0.2216981, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ForestColor: {r: 0.01610675, g: 0.3962264, b: 0, a: 1}
-    - _ForestEdgeColor: {r: 0.5660378, g: 0.4806644, b: 0.05606978, a: 1}
-    - _GroundColor: {r: 0.6603774, g: 0.4446357, b: 0.07787468, a: 1}
-    - _MountainCrestColor: {r: 0.660898, g: 0.9716981, b: 0.637104, a: 1}
-    - _MountainTopColor: {r: 0.6322535, g: 0.754717, b: 0.6016376, a: 1}
-    - _PointLightColor: {r: 0.8773585, g: 0.7955387, b: 0.5007565, a: 1}
-    - _PointLightPosition: {r: 0, g: -30.200813, b: 95.33054, a: 0}
-    - _WaterColor: {r: 0, g: 0.4847451, b: 0.6509434, a: 1}
