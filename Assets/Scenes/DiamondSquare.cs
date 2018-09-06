@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // the diamond square algorithm is built with support of this guide https://www.youtube.com/watch?v=1HV8GbFnCik
-public class DiamonSquare : MonoBehaviour {
+public class DiamondSquare : MonoBehaviour {
 
     public int edges = 7;
     public float size = 100;
@@ -114,7 +114,7 @@ public class DiamonSquare : MonoBehaviour {
 
                 for (int k = 0; k < numSquares; k++)
                 {
-                    DiamondSquare(row, col, squareSize, height);
+                    diamondSquare(row, col, squareSize, height);
                     col += squareSize;
                 }
 
@@ -140,7 +140,7 @@ public class DiamonSquare : MonoBehaviour {
     }
 
     // diamond square algorithm performed on a single square
-    public void DiamondSquare(int row, int col, int size, float heightRange)
+    public void diamondSquare(int row, int col, int size, float heightRange)
     {
         // Diamond step
         int halfSize = (int)(size * 0.5f);
